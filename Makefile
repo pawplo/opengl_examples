@@ -4,7 +4,7 @@ OPTIONS :=
 ifeq ($(OS),Darwin)
 	OPTIONS += -framework OpenGL
 else
-	OPTIONS += -lGL
+	OPTIONS += -lGL -ldl
 endif
 
 ifeq ($(CC), )
@@ -23,7 +23,9 @@ endif
 
 OPTIONS += $(shell pkg-config --cflags --libs glfw3)
 
-geometry_shader: geometry_shader.c
+default_target: all
+
+all: geometry_shader.c
 	$(CC) shader.c gl3w.c geometry_shader.c -o geometry_shader -Iinclude/ $(OPTIONS)
 
 clean:
