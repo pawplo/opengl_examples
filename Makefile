@@ -25,10 +25,7 @@ OPTIONS += $(shell pkg-config --cflags --libs glfw3)
 
 default_target: all
 
-all: geometry_shader geometry_shader2 geometry_shader3 geometry_shader_line geometry_shader_line2
-
-#all: geometry_shader.c
-#	$(CC) shader.c gl3w.c geometry_shader.c -o geometry_shader -Iinclude/ $(OPTIONS)
+all: geometry_shader geometry_shader2 geometry_shader3 geometry_shader_line geometry_shader_line2 texture
 
 geometry_shader: geometry_shader.c
 	$(CC) shader.c gl3w.c geometry_shader.c -o geometry_shader -Iinclude/ $(OPTIONS)
@@ -44,6 +41,9 @@ geometry_shader_line: geometry_shader_line.c
 
 geometry_shader_line2: geometry_shader_line2.c
 	$(CC) shader.c gl3w.c geometry_shader_line2.c -o geometry_shader_line2 -Iinclude/ $(OPTIONS)
+
+texture: texture.c
+	$(CC) shader.c gl3w.c texture.c -o texture -Iinclude/ $(OPTIONS)
 
 clean:
 	rm -rf geometry_shader
