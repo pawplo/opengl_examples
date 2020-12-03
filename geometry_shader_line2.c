@@ -24,7 +24,8 @@
 //
 //========================================================================
 
-#include <GL/gl3w.h>
+//#include <GL/gl3w.h>
+#include "gl.h"
 #include <GLFW/glfw3.h>
 
 #include <stdio.h>
@@ -230,10 +231,28 @@ static void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
-    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
-        printf("right_mouse_button_press\n");
-    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE)
-        printf("right_mouse_button_release\n");
+    if (button == GLFW_MOUSE_BUTTON_RIGHT ) {
+
+        if (action == GLFW_PRESS)
+            printf("right_mouse_button_press\n");
+        else if (action == GLFW_RELEASE)
+            printf("right_mouse_button_release\n");
+
+    } else if (button == GLFW_MOUSE_BUTTON_LEFT ) {
+
+        if (action == GLFW_PRESS)
+            printf("left_mouse_button_press\n");
+        else if (action == GLFW_RELEASE)
+            printf("left_mouse_button_release\n");
+
+    } else {
+
+        if (action == GLFW_PRESS)
+            printf("unknown_mouse_button_press\n");
+        else if (action == GLFW_RELEASE)
+            printf("unknown_mouse_button_release\n");
+    }
+
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
@@ -248,8 +267,8 @@ int main(void)
     if (!glfwInit())
         error_exit("Failed to initialize glfw.");
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
@@ -259,11 +278,11 @@ int main(void)
 
     glfwMakeContextCurrent(window);
 
-    if (gl3wInit())
-        error_exit("Failed to initialize OpenGL.");
+//    if (gl3wInit())
+//        error_exit("Failed to initialize OpenGL.");
 
-    if (!gl3wIsSupported(4, 1))
-        error_exit("OpenGL 4.1 not supported.");
+//    if (!gl3wIsSupported(4, 1))
+//        error_exit("OpenGL 4.1 not supported.");
 
     glfwSetWindowRefreshCallback(window, window_refresh_callback);
     glfwSetWindowSizeCallback(window, window_size_callback);

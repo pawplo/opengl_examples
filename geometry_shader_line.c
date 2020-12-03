@@ -24,7 +24,8 @@
 //
 //========================================================================
 
-#include <GL/gl3w.h>
+//#include <GL/gl3w.h>
+#include "gl.h"
 #include <GLFW/glfw3.h>
 
 #include <stdio.h>
@@ -174,8 +175,8 @@ int main(void)
     if (!glfwInit())
         error_exit("Failed to initialize glfw.");
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
@@ -185,11 +186,11 @@ int main(void)
 
     glfwMakeContextCurrent(window);
 
-    if (gl3wInit())
-        error_exit("Failed to initialize OpenGL.");
+//    if (gl3wInit())
+//        error_exit("Failed to initialize OpenGL.");
 
-    if (!gl3wIsSupported(4, 1))
-        error_exit("OpenGL 4.1 not supported.");
+//    if (!gl3wIsSupported(4, 1))
+//        error_exit("OpenGL 4.1 not supported.");
 
     glfwSetWindowRefreshCallback(window, window_refresh_callback);
     glfwSetWindowSizeCallback(window, window_size_callback);
