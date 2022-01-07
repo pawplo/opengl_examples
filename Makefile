@@ -21,7 +21,7 @@ OPTIONS += $(shell pkg-config --cflags --libs glfw3)
 
 default_target: all
 
-PROGRAMS = geometry_shader geometry_shader2 geometry_shader3 geometry_shader_line geometry_shader_line2 texture
+PROGRAMS = geometry_shader geometry_shader2 geometry_shader3 geometry_shader_line geometry_shader_line2 texture gamepad
 
 .PHONY: all
 all: $(PROGRAMS)
