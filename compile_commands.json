@@ -1,0 +1,9 @@
+[{
+    "directory": "/Users/air/r/opengl_examples",
+    "file": "/Users/air/r/opengl_examples/*.c",
+    "arguments": [
+        "clang",
+        "-I", "/Users/air/r/opengl_examples/",
+        "-I", "/Users/air/r/opengl_examples/glfw-3.4.bin.MACOS/include/"
+    ]
+}]

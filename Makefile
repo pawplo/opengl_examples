@@ -5,9 +5,7 @@ else
 	OPTIONS = -lGL -ldl
 endif
 
-ifeq ($(CC), )
-	CC := gcc
-endif
+CC ?= gcc
 
 ifneq ($(shell which pkg-config 1>/dev/null 2>/dev/null; echo $$?), 0)
     $(error "pkg-config not installed !!!")
@@ -21,7 +19,7 @@ OPTIONS += $(shell pkg-config --cflags --libs glfw3)
 
 default_target: all
 
-PROGRAMS = geometry_shader geometry_shader2 geometry_shader3 geometry_shader_line geometry_shader_line2 texture gamepad
+PROGRAMS = geometry_shader geometry_shader2 geometry_shader3 geometry_shader_line geometry_shader_line2 texture gamepad gui
 
 .PHONY: all
 all: $(PROGRAMS)
