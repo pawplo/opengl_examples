@@ -34,6 +34,9 @@ const GLfloat texcoord_data[] = {
     1.0, 1.0,
 };
 
+GLFWcursor *cursor_ew;
+GLFWcursor *cursor_ns;
+
 const char *vertex_shader_str =
 "#version 410 core\n"
 "in vec2 vertex_position;\n"
@@ -54,7 +57,10 @@ const char *fragment_shader_str =
 "}\n";
 
 GLuint program;
-GLFWwindow* window;
+GLFWwindow *w;
+GLFWwindow *w2;
+
+volatile _Bool w2_show = 0;
 
 void error_exit(const char *str)
 {
@@ -67,26 +73,82 @@ void error_callback(int error, const char* description)
     fprintf(stderr, "Error: %s\n", description);
 }
 
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
     printf("key %d %d %d %d\n", key, scancode, action, mods);
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
+    }
 }
 
-static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
+static void cursor_position_callback(GLFWwindow *window, double xpos, double ypos)
 {
-    printf("cursor %f %f\n", xpos, ypos);
+    if (window == w && w2_show) return;
+    printf("cursor[%d] %f %f\n", window == w, xpos, ypos);
+    if (xpos > 150 && xpos < 300 && ypos > 150 && ypos < 300) {
+        glfwSetCursor(window, cursor_ew);
+    } else {
+        glfwSetCursor(window, NULL);
+    }
 }
 
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
 {
     printf("scroll %f %f\n", xoffset, yoffset);
 }
 
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+void mouse_button_callback(GLFWwindow *window, int button, int action, int mods)
 {
-        printf("mouse_button %d %d %d\n", button, action, mods);
+    printf("mouse_button %d %d %d\n", button, action, mods);
+    if (w2_show == 1) return;
+    w2_show = 1;
+    w2 = glfwCreateWindow(200, 200, "🍏", NULL, NULL);
+    if (!w2) error_exit("Failed to create window.");
+    glfwShowWindow(w2);
+//    glfwMakeContextCurrent(w2);
+    glfwSetCursorPosCallback(w2, cursor_position_callback);
+}
+
+void char_mods_callback(GLFWwindow *window, unsigned int codepoint, int mods)
+{
+    printf("char_mods %d %d\n", codepoint, mods);
+}
+
+void char_callback(GLFWwindow *window, unsigned int codepoint)
+{
+    printf("char %d\n", codepoint);
+}
+
+void drop_callback(GLFWwindow *window, int path_count, const char* paths[])
+{
+    for (int i = 0; i < path_count; i++) {
+        printf("drop[%d] %s\n", i, paths[i]);
+    }
+}
+
+void cursor_enter_callback(GLFWwindow *window, int entered)
+{
+    printf("cursor_enter %d\n", entered);
+}
+
+void framebuffer_size_callback(GLFWwindow *window, int width, int height)
+{
+    printf("framebuffer_size %d %d\n", width, height);
+//    glViewport(0, 0, width, height);
+}
+
+void window_pos_callback(GLFWwindow *window, int xpos, int ypos)
+{
+    printf("window_pos %d %d\n", xpos, ypos);
+}
+
+void window_focus_callback(GLFWwindow* window, int focused)
+{
+    printf("focus[%d] %d\n", window == w, focused);
+    if (window == w && focused) {
+        if (w2_show) glfwFocusWindow(w2);
+        glfwRequestWindowAttention(w2);
+    }
 }
 
 int main(int argc, char *argv[])
@@ -101,11 +163,21 @@ int main(int argc, char *argv[])
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    window = glfwCreateWindow(300, 300, "OpenGL 4.1 Texture", NULL, NULL);
-    if (!window)
-         error_exit("Failed to create window.");
+//    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+//    glfwWindowHint(GLFW_DECORATED, GL_FALSE);
+//    glfwWindowHint(GLFW_FLOATING, GL_TRUE);
 
-    glfwMakeContextCurrent(window);
+    w = glfwCreateWindow(600, 600, "🍏🍎🍐🍊🍋🍋🍌🍉🍇🍓🫐🍈🍒🍑🥭🍍🥥", NULL, NULL);
+    if (!w) error_exit("Failed to create window.");
+
+    glfwWindowHint(GLFW_FLOATING, GL_TRUE);
+
+    //glfwMakeContextCurrent(w2);
+
+    glfwMakeContextCurrent(w);
+
+    cursor_ew = glfwCreateStandardCursor(GLFW_RESIZE_EW_CURSOR);
+    cursor_ns = glfwCreateStandardCursor(GLFW_RESIZE_NS_CURSOR);
 
 //    if (gl3wInit())
 //        error_exit("Failed to initialize OpenGL.\n");
@@ -152,23 +224,52 @@ int main(int argc, char *argv[])
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-    glfwSetKeyCallback(window, key_callback);
-    glfwSetCursorPosCallback(window, cursor_position_callback);
-    glfwSetScrollCallback(window, scroll_callback);
-    glfwSetMouseButtonCallback(window, mouse_button_callback);
-
-//    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-//    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-//    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
-//    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-    while (!glfwWindowShouldClose(window)) {
-        glClear(GL_COLOR_BUFFER_BIT);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+    if (glfwRawMouseMotionSupported()) {
+        printf("glfwRawMouseMotionSupported()");
+        glfwSetInputMode(w, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
     }
 
+    glfwSetKeyCallback(w, key_callback);
+    glfwSetCursorPosCallback(w, cursor_position_callback);
+    glfwSetScrollCallback(w, scroll_callback);
+    glfwSetMouseButtonCallback(w, mouse_button_callback);
+    glfwSetCharModsCallback(w, char_mods_callback);
+    glfwSetCharCallback(w, char_callback);
+    glfwSetDropCallback(w, drop_callback);
+    glfwSetCursorEnterCallback(w, cursor_enter_callback);
+    glfwSetFramebufferSizeCallback(w, framebuffer_size_callback);
+    glfwSetWindowPosCallback(w, window_pos_callback);
+    glfwSetWindowFocusCallback(w, window_focus_callback);
+
+//    glfwSetInputMode(w, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+//    glfwSetInputMode(w, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+//    glfwSetInputMode(w, GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
+//    glfwSetInputMode(w, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+ //   glfwSetInputMode(w, GLFW_LOCK_KEY_MODS, 1);
+
+
+    while (!glfwWindowShouldClose(w)) {
+        if (w2_show) {
+            while (!glfwWindowShouldClose(w2)) {
+                glfwPollEvents();
+            }
+            w2_show = 0;
+            //glfwFocusWindow(w);
+            glfwDestroyWindow(w2);
+            //glfwHideWindow(w2);
+//            glfwMakeContextCurrent(w);
+
+        } else {
+
+            glClear(GL_COLOR_BUFFER_BIT);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+            glfwSwapBuffers(w);
+            glfwPollEvents();
+        }
+    }
+
+    printf("terminate\n");
     glfwTerminate();
     return 0;
 }
